@@ -8,8 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 typedef struct No {
-    int token;
+    char token[50];
     struct No* direita;
     struct No* esquerda;
 } No;
@@ -17,8 +18,8 @@ typedef struct No {
 
 No* allocar_no();
 void liberar_no(void* no);
-void imprimir_no(No* raiz);
-No* novo_no(int, No*, No*);
+void imprimir_arvore(No* raiz);
+No* novo_no(char[50], No*, No*);
 
 %}
 
@@ -26,7 +27,7 @@ No* novo_no(int, No*, No*);
 %union 
 {
     int number;
-    char *string;
+    char simbolo[50];
     struct No* no;
 }
 %token NUM
@@ -38,18 +39,25 @@ No* novo_no(int, No*, No*);
 %token FPAR
 %token EOL
 
+%type<no> calc
 %type<no> termo
 %type<no> fator
 %type<no> exp
+%type<simbolo> NUM
+%type<simbolo> MUL
+%type<simbolo> DIV
+%type<simbolo> SUB
+%type<simbolo> ADD
+
 
 %%
 /* Regras de Sintaxe */
 
 calc:
-    | calc exp EOL       { } 
+    | calc exp EOL       { printf("%s", $2) } 
 
 exp: fator                
-   | exp ADD fator       { }
+   | exp ADD fator       { $$ = $1 + $3 }
    | exp SUB fator       { }
    ;
 
@@ -77,26 +85,25 @@ void liberar_no(void* no) {
     free(no);
 }
 
-No* novo_no(int token, No* direita, No* esquerda) {
+No* novo_no(char token[50], No* direita, No* esquerda) {
    No* no = allocar_no();
-   no->token = token;
+   snprintf(no->token, 50, "%s", token);
    no->direita = direita;
    no->esquerda = esquerda;
 
    return no;
 }
 
-void imprimir_no(No* raiz) {
-    if (raiz->token) {
-        printf("CALC");
-        return;
-    } 
-    else {
-        imprimir_no(raiz->esquerda);
-        printf("%i -- ", raiz->token);
-        imprimir_no(raiz->direita);
-        return;
-    }
+void imprimir_arvore(No* raiz) {
+    
+    if(raiz == NULL) { printf("***"); return; }
+    printf("(%s)", raiz->token);
+    printf("direira>");
+    imprimir_arvore(raiz->direita);
+    printf("esquerda>");
+    imprimir_arvore(raiz->esquerda);
+    
+
 }
 
 
@@ -107,5 +114,4 @@ int main(int argc, char** argv) {
 yyerror(char *s) {
     fprintf(stderr, "error: %s\n", s);
 }
-
 
