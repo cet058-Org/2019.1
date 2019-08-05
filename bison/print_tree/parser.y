@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 typedef struct No {
     char token[50];
     struct No* direita;
@@ -50,14 +49,15 @@ No* novo_no(char[50], No*, No*);
 %type<simbolo> ADD
 
 
+
 %%
 /* Regras de Sintaxe */
 
 calc:
-    | calc exp EOL       { printf("%s", $2) } 
+    | calc exp EOL       { imprimir_arvore($2); } 
 
-exp: fator                
-   | exp ADD fator       { $$ = $1 + $3 }
+exp: fator              
+   | exp ADD fator       { }
    | exp SUB fator       { }
    ;
 
@@ -66,11 +66,9 @@ fator: termo
      | fator DIV termo  { }
      ;
 
-termo: NUM               
-     | APAR termo FPAR   { }
-     | APAR exp FPAR     { }
-     ;
+termo: NUM { }
 
+           
 %%
 
 /* Código C geral, será adicionado ao final do código fonte 
@@ -114,4 +112,5 @@ int main(int argc, char** argv) {
 yyerror(char *s) {
     fprintf(stderr, "error: %s\n", s);
 }
+
 

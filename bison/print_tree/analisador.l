@@ -1,33 +1,26 @@
-/* Escreva uma analisador capaz de extrair os tokens de uma expressão
- * aritimética simples, incluindo parenteses.*/
+/* SEÇÃO DE DEFINIÇÕES */
 
 %{
-
-/* Código Global C que será copiado para o fonte */
-/* #includes, variáveis globais e constantes vão aqui... */
-
-#include "parser.tab.h"
-
+    #include "parser.tab.h"
 %}
 
-/* Definições */
-NUMBER [0-9]+
+/* Definições de Nomes */
+NUMBER              [0-9]+
 
-
-/* Início das Regras */
-%%
-{NUMBER}    {yylval = atoi(yytext); return NUM;}
-"\*"        {return MUL;}
-"/"         {return DIV;}
-"\+"         {return ADD;}
-"\-"         {return SUB;}
-"\("         {return APAR;}
-"\)"         {return FPAR;}
-"\n"         {return EOL;}
+/* FIM DA SEÇÃO DE DEFINIÇÕES */
 
 %%
-/* Fim das Regras */
-/* Código C abaixo será incluído nos fontes. */
+
+{NUMBER}                        {strncpy(yylval.simbolo, yytext, 50); return NUM;}
+"\*"                            {return MUL;}   
+"/"                             {return DIV;}
+"\+"                            {return ADD;}   
+"\-"                            {return SUB;} 
+"\("                            {return APAR;}
+"\)"                            {return FPAR;}
+"\n"                            {return EOL;}
+<<EOF>>                         {return 0;}
+
+%%
 
 int yywrap() {}
-
